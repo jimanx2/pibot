@@ -1,5 +1,5 @@
 var TelegramBot = require('node-tg-bot');
-var token = "167790293:AAFzx2VQ6jiXuucD-5rj-vDs09h9LQTPP3M";
+var token = "";
 
 bot = new TelegramBot(token, { polling: true });
 
