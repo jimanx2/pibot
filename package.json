@@ -9,6 +9,7 @@
   "author": "HAZIMAN HASHIM",
   "license": "MIT",
   "dependencies": {
+    "glob": "^6.0.1",
     "node-tg-bot": "^1.1.20"
   }
 }
