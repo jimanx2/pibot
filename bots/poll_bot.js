@@ -86,7 +86,7 @@ module.exports = function(){
         if(err || !poll)
           bot.sendMessage(msg.from.id, "Failed to find poll. Reason: "+err);
         else{
-          var out = "Poll "+poll.id+"'"+poll.title+"' by @"+poll.oname+":\n";
+          var out = "Poll "+poll.id+"\n'"+poll.title+"'\n by @"+poll.oname+":\n";
           db.choices.find({ poll_id: pid }, function(err, choices){
             var lasti = -1;
             choices.forEach(function(choice, i){
