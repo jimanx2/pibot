@@ -2,6 +2,7 @@ module.exports = function(){
   var Bot = require('../bot_skel.js');
   
   function PollBot(bot, node){
+    var $this = this;
     var db = {
       polls: new node.DataStore({ filename: 'db/polls.db', autoload: true }),
       choices: new node.DataStore({ filename: 'db/choices.db', autoload: true }),
@@ -10,9 +11,14 @@ module.exports = function(){
     
     this.$name = "poll";
     
-    this.$tasks["desc"] = function(params, msg){
-      
+    this.$tasks["list"] = function(params, msg){
+      db.polls.find({}, function(err, polls){
+        polls.forEach(function(poll){
+          $this.$tasks["peek"]([poll.id], msg);
+        })
+      });
     };
+    
     this.$tasks["create"] = function(params, msg){
       var pid = node.SecureRandom.hex(1).toUpperCase();
       db.polls.insert({ id: pid, title: params.join(" "), oid: msg.from.id, oname: msg.from.username },
@@ -80,7 +86,7 @@ module.exports = function(){
         if(err || !poll)
           bot.sendMessage(msg.from.id, "Failed to find poll. Reason: "+err);
         else{
-          var out = "Poll '"+poll.title+"' by @"+poll.oname+":\n";
+          var out = "Poll "+poll.id+"'"+poll.title+"' by @"+poll.oname+":\n";
           db.choices.find({ poll_id: pid }, function(err, choices){
             var lasti = -1;
             choices.forEach(function(choice, i){
