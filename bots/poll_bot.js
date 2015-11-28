@@ -11,13 +11,16 @@ module.exports = function(){
     
     this.$name = "poll";
     
-    this.$tasks["list"] = function(params, msg){
+    function listPoll(params, msg){
       db.polls.find({}, function(err, polls){
         polls.forEach(function(poll){
           $this.$tasks["peek"]([poll.id], msg);
         })
       });
     };
+    listPoll.$noArgs = true;
+    this.$tasks["list"] = listPoll;
+    this.$desc["list"] = "- Display all polls";
     
     this.$tasks["create"] = function(params, msg){
       var pid = node.SecureRandom.hex(1).toUpperCase();
@@ -33,6 +36,7 @@ module.exports = function(){
             );
         })
     };
+    this.$desc["create"] = "<poll text> - Create new poll based on <poll text>";
     
     this.$tasks["option"] = function(params, msg){
       var pid = params.shift().toUpperCase();
@@ -53,6 +57,7 @@ module.exports = function(){
         }  
       })
     }
+    this.$desc["option"] = "<poll id> <option text> - Add new option to poll";
     
     this.$tasks["vote"] = function(params, msg){
       var pid = params.shift().toUpperCase(), cid = params.shift().toUpperCase();
@@ -79,6 +84,7 @@ module.exports = function(){
         }
       });
     }
+    this.$desc["vote"] = "<poll id> <option id> - Vote the poll";
     
     this.$tasks["peek"] = function(params, msg){
       var pid = params.shift().toUpperCase();
@@ -103,6 +109,55 @@ module.exports = function(){
         }
       });
     }
+    this.$desc["peek"] = "<poll id> - Display summary of a poll";
+    
+    this.$tasks["del"] = function(params, msg){
+      var pid = params.shift().toUpperCase();
+      db.polls.findOne({ id: pid }, function(err, poll){
+        if(err || !poll)
+          bot.sendMessage(msg.from.id, "Failed to find poll. Reason: "+err); 
+        else{
+          if(poll.oid != msg.from.id)
+            bot.sendMessage(msg.chat.id, "Only owner of poll allowed to remove the poll");
+          else{
+            db.polls.remove({ id: pid }, function(err, numRemoved){
+              if(err)
+                bot.sendMessage(msg.from.id, "Failed to remove poll, "+err);
+              else
+                bot.sendMessage(msg.chat.id, "Poll "+pid+" removed successfully");
+            });
+          }
+        }
+      });
+    }
+    this.$desc["del"] = "<poll id> - Delete a poll";
+    
+    this.$tasks["deloption"] = function(params, msg){
+      var pid = params.shift().toUpperCase(), cid = params.shift().toUpperCase();
+      db.polls.findOne({ id: pid }, function(err, poll){
+        if(err || !poll)
+          bot.sendMessage(msg.from.id, "Failed to find poll. Reason: "+err); 
+        else{
+          if(poll.oid != msg.from.id)
+            bot.sendMessage(msg.chat.id, "Only owner of poll allowed to remove option of a poll");
+          else{
+            db.choices.findOne({ id: cid, poll_id: pid }, function(err, choice){
+              if(choice){
+                db.choices.remove({ id: cid }, function(err, nRemoved){
+                  if(err)
+                    bot.sendMessage(msg.from.id, "Failed to remove choice, "+err);
+                  else
+                    bot.sendMessage(msg.chat.id, "Choice "+cid+" removed successfully");
+                });
+              } else {
+                bot.sendMessage(msg.from.id, "No such choice '"+cid+"'")
+              }
+            })
+          }
+        }
+      });
+    }
+    this.$desc["deloption"] = "<poll id> <option id> - Remove an option from a poll";
     
     this.init(bot);
   }
