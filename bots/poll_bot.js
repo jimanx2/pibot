@@ -13,9 +13,12 @@ module.exports = function(){
     
     function listPoll(params, msg){
       db.polls.find({}, function(err, polls){
-        polls.forEach(function(poll){
-          $this.$tasks["peek"]([poll.id], msg);
-        })
+        if(polls.length == 0)
+          bot.sendMessage(msg.chat.id, "No poll created as of now.");
+        else
+          polls.forEach(function(poll){
+            $this.$tasks["peek"]([poll.id], msg);
+          })
       });
     };
     listPoll.$noArgs = true;
