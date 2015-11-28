@@ -63,33 +63,32 @@ module.exports = function(){
     this.$desc["option"] = "<poll id> <option text> - Add new option to poll";
     
     this.$tasks["vote"] = function(params, msg){
-      try{
-        var pid = params.shift().toUpperCase(), cid = params.shift().toUpperCase();
-        db.polls.findOne({ id: pid }, function(err, poll){
-          if(err)
-            bot.sendMessage(msg.from.id, "Failed to find poll. Reason: "+err);
-          else{
-            db.choices.findOne({ id: cid, poll_id: pid }, function(err, choice){
-              var vid = node.SecureRandom.hex(1).toUpperCase();
-              if(choice){
-                db.votes.find({ poll_id: pid, oid: msg.from.id}, function(err, vote){
-                  if(!err && vote.length > 0){
-                    bot.sendMessage(msg.chat.id, "You already voted '"+choice.title+"' for this poll");  
-                  } else {
-                    db.votes.insert({ id: vid, cid: cid, poll_id: pid, oid: msg.from.id }, function(err, vote){
-                      bot.sendMessage(msg.chat.id, "You voted '"+choice.title+"' for poll '"+poll.title+"'");  
-                    })
-                  }
-                })
-              } else {
-                bot.sendMessage(msg.from.id, "Failed to find choice. ");
-              }
-            })
-          }
-        });
-      } catch (ex){
-        $this.$tasks["desc"](["vote"], msg);
-      }
+      if(params.length != 2)
+        return $this.$tasks["desc"](["vote"], msg);
+        
+      var pid = params.shift().toUpperCase(), cid = params.shift().toUpperCase();
+      db.polls.findOne({ id: pid }, function(err, poll){
+        if(err)
+          bot.sendMessage(msg.from.id, "Failed to find poll. Reason: "+err);
+        else{
+          db.choices.findOne({ id: cid, poll_id: pid }, function(err, choice){
+            var vid = node.SecureRandom.hex(1).toUpperCase();
+            if(choice){
+              db.votes.find({ poll_id: pid, oid: msg.from.id}, function(err, vote){
+                if(!err && vote.length > 0){
+                  bot.sendMessage(msg.chat.id, "You already voted '"+choice.title+"' for this poll");  
+                } else {
+                  db.votes.insert({ id: vid, cid: cid, poll_id: pid, oid: msg.from.id }, function(err, vote){
+                    bot.sendMessage(msg.chat.id, "You voted '"+choice.title+"' for poll '"+poll.title+"'");  
+                  })
+                }
+              })
+            } else {
+              bot.sendMessage(msg.from.id, "Failed to find choice. ");
+            }
+          })
+        }
+      });
     }
     this.$desc["vote"] = "<poll id> <option id> - Vote the poll";
     
