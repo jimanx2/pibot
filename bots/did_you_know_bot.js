@@ -6,8 +6,10 @@ module.exports = function(){
     this.$name = "didyouknow";
     
     ['db/dykb_subscribers.db','db/dykb_feeds.db'].forEach(function(dbFile){
-      if( node.Fs.accessSync(dbFile, node.Fs.R_OK) )
-        node.Fs.unlinkSync(dbFile);
+      try{
+        if( node.Fs.accessSync(dbFile, node.Fs.R_OK) )
+          node.Fs.unlinkSync(dbFile);
+      } catch(ex) {}
     });
     
     var db = {
