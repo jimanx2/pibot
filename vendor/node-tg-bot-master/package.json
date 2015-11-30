@@ -1,0 +1,29 @@
+{
+  "name": "node-tg-bot",
+  "version": "1.1.14",
+  "description": "Nodejs Telegram Bot Api",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "events": "^1.1.0",
+    "fs": "0.0.2",
+    "mime": "^1.3.4",
+    "path": "^0.12.7",
+    "request": "^2.65.0",
+    "stream": "0.0.2",
+    "url": "^0.11.0",
+    "util": "^0.10.3"
+  },
+  "keywords": [
+    "telegram",
+    "bot",
+    "api"
+  ],
+  "author": "Emlio Carrino",
+  "license": "ISC",
+  "_shasum": "2cb0558eb30d9db78eaecfd42de4d34e199cb25d",
+  "_from": "node-tg-bot@>=1.1.2 <2.0.0",
+  "devDependencies": {}
+}

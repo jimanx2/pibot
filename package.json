@@ -9,9 +9,13 @@
   "author": "HAZIMAN HASHIM",
   "license": "MIT",
   "dependencies": {
+    "cron": "^1.0.9",
+    "feedparser": "^1.1.4",
     "glob": "^6.0.1",
     "nedb": "^1.5.0",
-    "node-tg-bot": "jimanx2/node-tg-bot",
-    "securerandom": "0.0.2"
+    "node-tg-bot": "file:./vendor/node-tg-bot-master",
+    "request": "^2.67.0",
+    "securerandom": "0.0.2",
+    "upndown": "^2.0.2"
   }
 }

@@ -15,7 +15,7 @@ module.exports = function(){
         if(taskName == "desc") return;
         out += taskName + " " + $this.$desc[taskName] + "\n"
       });
-      bot.sendMessage(msg.from.id, out);
+      bot.sendMessage(msg.chat.id, out);
     }
     this.$desc = {};
   }
