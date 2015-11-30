@@ -102,7 +102,8 @@ module.exports = function(){
                   lasti = i;
                   bot.sendPhoto(_sub.id, node.Path.resolve('tmp/'+feed.fid+'.png') , {}, function(err){
                     if(err) reject(err);
-                    node.Fs.unlinkSync('tmp/'+feed.fid+'.png');
+                    try{ node.Fs.unlinkSync('tmp/'+feed.fid+'.png'); }
+                    catch(ex){}
                     if(lasti == subs.length) 
                       resolve();
                   });
@@ -114,7 +115,7 @@ module.exports = function(){
       },
       cron: function(){
         new node.Cron(
-          '0 9 * * *', // cron syntax
+          '*/1 * * * *', // cron syntax
           function() {
             // the DO
             sub.getFeed(1).then(function(feeds){
@@ -136,7 +137,7 @@ module.exports = function(){
         if(subscriber)
           return bot.sendMessage(msg.chat.id, "Already subscribed");
         
-        db.subscriber.insert({ id: subscriber.id }, function(err){
+        db.subscriber.insert({ id: msg.chat.id }, function(err){
           if(err) return errHandler(err);
           bot.sendMessage(msg.chat.id, "Successfully subcribed");
         })
