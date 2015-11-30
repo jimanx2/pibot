@@ -115,7 +115,7 @@ module.exports = function(){
       },
       cron: function(){
         new node.Cron(
-          '*/1 * * * *', // cron syntax
+          '0 9 * * *', // cron syntax
           function() {
             // the DO
             sub.getFeed(1).then(function(feeds){
