@@ -23,6 +23,7 @@ module.exports = function(){
     function doneListen(){
       $listening = false;
       $asking = false;
+      convId = null;
       bot.sendMessage(convId, "Ok. Tata...");
     }
     doneListen.$noArgs = true;
@@ -44,15 +45,20 @@ module.exports = function(){
     });
     
     bot.on('update', function(update) {
-      // console.log("CleverBot :", update.message);
+      console.log("CleverBot :", update.message.text);
       
       if( update.message.text.trim()[0] == "/" ) return;
       var params = update.message.text.split(" ");
       var keyword = params.shift();
       
       // not the required chat
-      if( update.message.chat.id != convId )
+      if( !convId ){
         return;
+      }
+      if( update.message.chat.id != convId ){
+        console.log(update.message.chat.id,"!=", convId);
+        return;
+      }
 
       params.unshift(keyword);
       var phrase = params.join(' ');
