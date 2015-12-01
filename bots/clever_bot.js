@@ -32,6 +32,7 @@ module.exports = function(){
     
     bot.on($this.$name, function(params, msg){
       if($listening){
+        if(params[0] == "done") return $this.$tasks["done"]([], msg);
         console.log("CleverBot :", params.join(' '));
 
         // not the required chat
