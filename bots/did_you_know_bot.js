@@ -123,14 +123,16 @@ module.exports = function(){
       },
       cron: function(){
         new node.Cron(
-          '0 9 * * *', // cron syntax
+          '0 */4 * * *', // every 4 hours
           function() {
             // the DO
-            sub.getFeed(1).then(function(feeds){
-              return sub.sendFeeds(feeds);
-            }).then(function(err){
-              if(err) errHandler(err);
-            }).catch(errHandler);
+            var now = new Date();
+            if(now.getHours() >= 8 && now.getHours() < 20) // skip 10.00 pm to 7 am
+              sub.getFeed(1).then(function(feeds){
+                return sub.sendFeeds(feeds);
+              }).then(function(err){
+                if(err) errHandler(err);
+              }).catch(errHandler);
           }, function () {
             // do nothing on stop
           },
