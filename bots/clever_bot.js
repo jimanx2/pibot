@@ -8,7 +8,7 @@ module.exports = function(){
     var $listening = false, convId = null,
         $asking = false;
     var Cleverbot = require("cleverbot.io");
-    cleverbot = new Cleverbot("JQU5usm68qkXWHKQ", "g0giw78pG84AUw684798zYDWVMSu1FRj");
+    cleverbot = new Cleverbot("API-USER", "API-KEY");
     
     function startListen(params, msg){
       cleverbot.setNick("sessionname");
