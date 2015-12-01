@@ -9,7 +9,7 @@
   "author": "HAZIMAN HASHIM",
   "license": "MIT",
   "dependencies": {
-    "cleverbot-node": "^0.2.1",
+    "cleverbot.io": "^1.0.4",
     "cron": "^1.0.9",
     "feedparser": "^1.1.4",
     "glob": "^6.0.1",

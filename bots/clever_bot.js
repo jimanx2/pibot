@@ -7,14 +7,15 @@ module.exports = function(){
     
     var $listening = false, convId = null,
         $asking = false;
-    var Cleverbot = require('cleverbot-node');
-    cleverbot = new Cleverbot;
+    var Cleverbot = require("cleverbot.io");
+    cleverbot = new Cleverbot("JQU5usm68qkXWHKQ", "g0giw78pG84AUw684798zYDWVMSu1FRj");
     
     function startListen(params, msg){
-      Cleverbot.prepare(function(){
-        convId = msg.chat.id;
-        bot.sendMessage(convId, "Yes sir?", { reply_markup: { force_reply: true } });
+      cleverbot.setNick("sessionname");
+      cleverbot.create(function (err, session) {
         $listening = true;
+        convId = msg.chat.id;
+        bot.sendMessage(convId, "Yes sir?");
       });
     };
     startListen.$noArgs = true;
@@ -40,7 +41,7 @@ module.exports = function(){
           return;
         }
         if( msg.chat.id != convId ){
-          console.log(update.message.chat.id,"!=", convId);
+          console.log(msg.chat.id,"!=", convId);
           return;
         }
 
@@ -53,9 +54,8 @@ module.exports = function(){
           });
 
         $asking = true;  
-        cleverbot.write(phrase, function (response) {
-          // console.log("Got ",response );
-          bot.sendMessage(convId, response.message, {
+        cleverbot.ask(phrase, function (err, response) {
+          bot.sendMessage(convId, response, {
             reply_to_message_id: msg.message_id,
             reply_markup: { force_reply: true }
           });
