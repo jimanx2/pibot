@@ -1,9 +1,6 @@
 var TelegramBot = require('node-tg-bot');
 var token = process.env["TG_PIBOT_TOKEN"];
 bot = new TelegramBot(token, { polling: true });
-bot.on('update', function(update) {
-  console.log("PIBOT: ", update);
-});
 
 var Node = { 
   glob: require('glob'), 
