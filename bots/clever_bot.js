@@ -23,8 +23,8 @@ module.exports = function(){
     function doneListen(){
       $listening = false;
       $asking = false;
-      convId = null;
       bot.sendMessage(convId, "Ok. Tata...");
+      convId = null;
     }
     doneListen.$noArgs = true;
     this.$tasks["done"] = doneListen;
