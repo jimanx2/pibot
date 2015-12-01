@@ -22,15 +22,18 @@ module.exports = function(){
   Bot.prototype.init = function(bot){
     var $this = this, task;
     bot.on($this.$name, function(params, msg){
-      if(params.length == 0)
+      if(params.length == 0){
         return $this.$tasks["desc"]([], msg);
+      }
         
       task = params.shift();
-      if(!$this.$tasks[task])
+      if(!$this.$tasks[task]){
         return $this.$tasks["desc"]([], msg);
+      }
       
-      if(params.length == 0 && !$this.$tasks[task].$noArgs)
+      if(params.length == 0 && !$this.$tasks[task].$noArgs){
         return $this.$tasks["desc"]([task], msg);
+      }
       
       $this.$tasks[task](params, msg);
     });

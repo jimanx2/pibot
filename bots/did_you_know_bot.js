@@ -9,7 +9,7 @@ module.exports = function(){
       try{
         if( node.Fs.accessSync(dbFile, node.Fs.R_OK) )
           node.Fs.unlinkSync(dbFile);
-      } catch(ex) {}
+      } catch(ex) { console.log(ex); }
     });
     
     var db = {
@@ -47,7 +47,6 @@ module.exports = function(){
           fid: fid++
         }, function(err, feed){
           if(err) return errHandler(err);
-          console.log("Inserted ", feed.title);
         });
       }
     });
@@ -85,7 +84,7 @@ module.exports = function(){
           });
         })
       },
-      sendFeeds: function(feeds){
+      sendFeeds: function(feeds, chatid){
         return new Promise(function(resolve, reject){
           feeds.forEach(function(feed){
             var feedReq = node.Request(feed.img), feedImg = node.Fs.createWriteStream('tmp/'+feed.fid+'.png');
@@ -94,6 +93,15 @@ module.exports = function(){
               this.pipe(feedImg);
             });
             feedImg.on('finish', function(){
+              
+              if(chatid)
+                return bot.sendPhoto(chatid, node.Path.resolve('tmp/'+feed.fid+'.png') , {}, function(err){
+                  if(err) reject(err);
+                  try{ node.Fs.unlinkSync('tmp/'+feed.fid+'.png'); }
+                  catch(ex){ }
+                  resolve();
+                });
+                
               sub.getSub().then(function(subs){
                 console.log("Sending DYKs to ", subs);
                 var lasti;
@@ -146,6 +154,18 @@ module.exports = function(){
     Subscribe.$noArgs = true;
     this.$tasks['subscribe'] = Subscribe;
     this.$desc['subscribe'] = '- Initiate subscribe';
+    
+    function fetchNext(params, msg){
+      sub.getFeed(1).then(function(feeds){
+        return sub.sendFeeds(feeds, msg.chat.id);
+      }).then(function(err){
+        if(err) errHandler(err);
+      }).catch(errHandler);
+    }
+    fetchNext.$noArgs = true;
+    this.$tasks['next'] = fetchNext;
+    this.$desc['next'] = "- Fetch the next didyouknow";
+    
     this.init(bot);
     sub.cron();
   }
