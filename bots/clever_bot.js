@@ -12,7 +12,7 @@ module.exports = function(){
       var cleverbot = new Cleverbot("JQU5usm68qkXWHKQ", "g0giw78pG84AUw684798zYDWVMSu1FRj");
       cleverbot.create(function (err, nick) {
         conversations[msg.chat.id] = { bot: cleverbot, ref: nick, $asking: false, $listening: true };
-        bot.sendMessage(convId, "Hi, I am "+nick);
+        bot.sendMessage(msg.chat.id, "Hi, I am "+nick);
       });
     };
     startListen.$noArgs = true;
