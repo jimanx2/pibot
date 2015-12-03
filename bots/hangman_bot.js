@@ -5,15 +5,16 @@ module.exports = function(){
     var $this = this;
     
     this.$name = "hang";
-    var sessions = {};
+    var sessions = {}, getting = false;
     
     function getStage(msg){
       return new Promise(function(resolve, reject){
-      
         bot.sendMessage(msg.chat.id, "Please wait..");
+        getting = true;
         node.Request('http://localhost:3000/workers/hangman', function (error, response, body) {
           if (!error && response.statusCode == 200) {
             var stage = JSON.parse(body);
+            getting = false;
             resolve(stage);
           } else {
             reject(error);
@@ -43,6 +44,8 @@ module.exports = function(){
         if(!sessions[msg.chat.id].win)
           return bot.sendMessage(msg.chat.id, "Please finish/abort current game first!");
         
+      if(getting) return;
+      
       getStage(msg).then(function(stage){
         console.log(stage.word);
         sessions[msg.chat.id] = {
