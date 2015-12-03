@@ -5,14 +5,33 @@ module.exports = function(){
     var $this = this;
     this.$name = "ai";
     
+    var greetings = [
+      "Hi", "Hey, man", "Hey",
+      "How’s it going?",
+      "What’s up?",
+      "How’s life?",
+      "How’s your day going?",
+      "Good to see you",
+      "It’s been a while",
+      "Pleased to meet you",
+      "Yo!",
+      "You wot m8?",
+      "Howdy!",
+      "Hiya!"
+    ];
     var conversations = {};
     var Cleverbot = require("cleverbot.io");
     
     function startListen(params, msg){
       var cleverbot = new Cleverbot("JQU5usm68qkXWHKQ", "g0giw78pG84AUw684798zYDWVMSu1FRj");
       cleverbot.create(function (err, nick) {
-        conversations[msg.chat.id] = { bot: cleverbot, ref: nick, $asking: false, $listening: true };
-        bot.sendMessage(msg.chat.id, "Hi, I am "+nick);
+        conversations[msg.chat.id] = { 
+          bot: cleverbot, ref: nick, $asking: false, $listening: true,
+          buzz: setTimeout(function(){
+            
+          }, 5*60*1000)
+        };
+        bot.sendMessage(msg.chat.id, greetings[Math.random()*greetings.length]);
       });
     };
     startListen.$noArgs = true;
@@ -23,10 +42,22 @@ module.exports = function(){
       conversations[msg.chat.id].$asking = false;
       bot.sendMessage(msg.chat.id, "Ok. Tata...");
       conversations[msg.chat.id] = null;
+      
     }
     doneListen.$noArgs = true;
     this.$tasks["done"] = doneListen;
     this.$desc["done"] = "- Stop the AI";
+    
+    function askBot(msg, phrase){
+      conversations[msg.chat.id].$asking = true;
+      conversations[msg.chat.id].bot.ask(phrase, function (err, response) {
+        bot.sendMessage(convId, response, {
+          reply_to_message_id: msg.message_id,
+          reply_markup: { force_reply: true }
+        });
+        conversations[msg.chat.id].$asking = false;
+      });
+    }
     
     bot.on($this.$name, function(params, msg){
       if(conversations[msg.chat.id]){
@@ -44,14 +75,7 @@ module.exports = function(){
             reply_markup: { force_reply: true }
           });
 
-        conversations[msg.chat.id].$asking = true;
-        conversations[msg.chat.id].bot.ask(phrase, function (err, response) {
-          bot.sendMessage(msg.chat.id, response, {
-            reply_to_message_id: msg.message_id,
-            reply_markup: { force_reply: true }
-          });
-          conversations[msg.chat.id].$asking = false;
-        });
+        askBot(msg, phrase);
         return;
       }
       
