@@ -43,7 +43,7 @@ module.exports = function(){
     }
     function startGame(params, msg){
       if(sessions[msg.chat.id])
-        if(!sessions[msg.chat.id].win)
+        if(!sessions[msg.chat.id].win || !sessions[msg.chat.id].live == 0)
           return bot.sendMessage(msg.chat.id, "Please finish/abort current game first!");
         
       if(getting) return;
@@ -121,24 +121,24 @@ module.exports = function(){
           function(err){
             if(err)
               console.log(err);
-            bot.sendMessage(msg.chat.id, stageString(session), { parse_mode: "Markdown" })
+            bot.sendMessage(msg.chat.id, stageString(session), { parse_mode: "Markdown" });
+            return $this.$tasks["start"]([], msg)
           }
         );
       }
     }
     
     bot.on($this.$name, function(params, msg){
+      if(params.length == 0)
+        return $this.$tasks["desc"]([], msg);
+
       if(sessions[msg.chat.id]){
         var char = params.shift().toLowerCase();
         if(char == "start") return $this.$tasks["start"](params, msg);
         if(char == "forfeit") return $this.$tasks["forfeit"](params, msg);
-        attempt(msg, char);
-        return;
+        return attempt(msg, char);
       }
       
-      if(params.length == 0)
-        return $this.$tasks["desc"]([], msg);
-
       task = params.shift();
       if(!$this.$tasks[task])
         return $this.$tasks["desc"]([], msg);
