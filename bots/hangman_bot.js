@@ -100,7 +100,8 @@ module.exports = function(){
           bot.sendMessage(msg.chat.id, sString,{
             parse_mode: "Markdown"
           }, function(err){
-            $this.$tasks["start"]([], msg);
+            if(session.live == 0)
+              $this.$tasks["start"]([], msg);
           });
         } else {
           bot.sendMessage(msg.chat.id, "Nice one!\n\n"+sString,{
