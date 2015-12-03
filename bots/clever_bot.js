@@ -34,7 +34,8 @@ module.exports = function(){
       if(conversations[msg.chat.id])
         return bot.sendMessage(msg.chat.id, "Already started");
         
-      cleverbot.create(function (err, nick) {
+      cleverbot.setNick("session");
+      cleverbot.create(function (err, nick) {        
         conversations[msg.chat.id] = { 
           bot: cleverbot, ref: nick, $asking: false, $listening: true,
           buzz: setBoredTimer(msg),
@@ -58,7 +59,6 @@ module.exports = function(){
     this.$desc["done"] = "- Stop the AI";
     
     function askBot(msg, phrase, noReply){
-      
       conversations[msg.chat.id].$asking = true;
       conversations[msg.chat.id].bot.ask(phrase, function (err, response) {
         bot.sendMessage(msg.chat.id, response, {
