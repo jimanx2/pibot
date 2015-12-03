@@ -7,6 +7,10 @@ module.exports = function(){
     
     var conversations = {};
     var Cleverbot = require("cleverbot.io");
+<<<<<<< HEAD
+=======
+    cleverbot = new Cleverbot("API-USER", "API-KEY");
+>>>>>>> ed7ab000ad39f7d4b51729ae1d4c653651414949
     
     function startListen(params, msg){
       var cleverbot = new Cleverbot("JQU5usm68qkXWHKQ", "g0giw78pG84AUw684798zYDWVMSu1FRj");
