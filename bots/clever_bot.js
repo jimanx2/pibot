@@ -23,13 +23,19 @@ module.exports = function(){
     var Cleverbot = require("cleverbot.io");
     
     function startListen(params, msg){
+      if(conversations[msg.chat.id])
+        return bot.sendMessage(msg.chat.id, "Already started");
+        
       var cleverbot = new Cleverbot("JQU5usm68qkXWHKQ", "g0giw78pG84AUw684798zYDWVMSu1FRj");
       cleverbot.create(function (err, nick) {
         conversations[msg.chat.id] = { 
           bot: cleverbot, ref: nick, $asking: false, $listening: true,
-          buzz: setTimeout(function(){
-            
-          }, 5*60*1000)
+          buzz: setInterval(function(){
+            var now = new Date().getTime();
+            if(now - conversations[msg.chat.id].lastHumanReply >= 5*60*1000)
+              askBot(msg, "New topic");
+          }, 5*60*1000),
+          lastHumanReply: 0
         };
         bot.sendMessage(msg.chat.id, greetings[Math.random()*greetings.length]);
       });
@@ -51,7 +57,7 @@ module.exports = function(){
     function askBot(msg, phrase){
       conversations[msg.chat.id].$asking = true;
       conversations[msg.chat.id].bot.ask(phrase, function (err, response) {
-        bot.sendMessage(convId, response, {
+        bot.sendMessage(msg.chat.id, response, {
           reply_to_message_id: msg.message_id,
           reply_markup: { force_reply: true }
         });
@@ -69,7 +75,7 @@ module.exports = function(){
 
         var phrase = params.join(' ');
         // console.log("Sending ",phrase );
-        if(!conversations[msg.chat.id])
+        if(conversations[msg.chat.id].$asking)
           return bot.sendMessage(msg.chat.id, "Please wait. I'm thinking.", {
             reply_to_message_id: msg.message_id,
             reply_markup: { force_reply: true }
