@@ -40,7 +40,7 @@ module.exports = function(){
         sessions[msg.chat.id] = {
           live: 10,
           category: stage.category,
-          word: stage.word,
+          word: stage.word.toLowerCase(),
           guesses: []
         }
         bot.sendMessage(
