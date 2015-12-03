@@ -21,14 +21,16 @@ module.exports = function(){
     ];
     var conversations = {};
     var Cleverbot = require("cleverbot.io");
-    var cleverbot = cleverbot = new Cleverbot("JQU5usm68qkXWHKQ", "g0giw78pG84AUw684798zYDWVMSu1FRj");
     
     function setBoredTimer(msg){
-      setInterval(function(){
+      if(conversations[msg.chat.id].buzz)
+        clearInterval(conversations[msg.chat.id].buzz);
+        
+      return setInterval(function(){
         var now = new Date().getTime();
         if(now - conversations[msg.chat.id].lastHumanReply >= 5*60*1000)
           askBot(msg, "New topic", true);
-      }, 5*60*1000)
+      }, 20*60*1000)
     }
     function startListen(params, msg){
       if(conversations[msg.chat.id])
@@ -59,6 +61,7 @@ module.exports = function(){
     this.$desc["done"] = "- Stop the AI";
     
     function askBot(msg, phrase, noReply){
+      conversations[msg.chat.id].buzz = setBoredTimer(msg);
       conversations[msg.chat.id].$asking = true;
       conversations[msg.chat.id].bot.ask(phrase, function (err, response) {
         bot.sendMessage(msg.chat.id, response, {
@@ -85,10 +88,6 @@ module.exports = function(){
             reply_markup: { force_reply: true }
           });
 
-        if(conversations[msg.chat.id].buzz){
-          clearInterval(conversations[msg.chat.id].buzz);
-          conversations[msg.chat.id].buzz = setBoredTimer(msg);
-        }
         askBot(msg, phrase);
         return;
       }
