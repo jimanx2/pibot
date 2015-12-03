@@ -23,7 +23,7 @@ module.exports = function(){
     var Cleverbot = require("cleverbot.io");
     
     function setBoredTimer(msg){
-      if(conversations[msg.chat.id].buzz)
+      if(conversations[msg.chat.id]) if(conversations[msg.chat.id].buzz)
         clearInterval(conversations[msg.chat.id].buzz);
         
       return setInterval(function(){
