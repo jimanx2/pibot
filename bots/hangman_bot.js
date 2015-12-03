@@ -43,7 +43,7 @@ module.exports = function(){
     }
     function startGame(params, msg){
       if(sessions[msg.chat.id])
-        if(!sessions[msg.chat.id].win || !sessions[msg.chat.id].live == 0)
+        if(!sessions[msg.chat.id].win || sessions[msg.chat.id].live == 0)
           return bot.sendMessage(msg.chat.id, "Please finish/abort current game first!");
         
       if(getting) return;
