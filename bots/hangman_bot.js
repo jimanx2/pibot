@@ -4,7 +4,7 @@ module.exports = function(){
   function HangmanBot(bot, node){
     var $this = this;
     
-    this.$name = "hangm";
+    this.$name = "hang";
     var sessions = {};
     
     function getStage(msg){
