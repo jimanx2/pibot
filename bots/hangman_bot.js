@@ -75,7 +75,7 @@ module.exports = function(){
     
     function success(msg){
       sessions[msg.chat.id] = null;
-      bot.sendMessage(msg.chat.id, "Yeay, you win!")
+      bot.sendMessage(msg.chat.id, "Yeay, you win! ("+sessions[msg.chat.id].word+")")
     }
     
     function attempt(msg, char){
