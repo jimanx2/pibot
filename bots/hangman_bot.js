@@ -100,6 +100,7 @@ module.exports = function(){
       if(sessions[msg.chat.id]){
         var char = params.shift().toLowerCase();
         if(char == "start") return $this.$tasks["start"](params, msg);
+        if(char == "forfeit") return $this.$tasks["forfeit"](params, msg);
         attempt(msg, char);
         return;
       }
