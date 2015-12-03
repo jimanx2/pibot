@@ -43,7 +43,7 @@ module.exports = function(){
     }
     function startGame(params, msg){
       if(sessions[msg.chat.id])
-        if(!sessions[msg.chat.id].win || sessions[msg.chat.id].live == 0)
+        if(!sessions[msg.chat.id].win || sessions[msg.chat.id].live != 0)
           return bot.sendMessage(msg.chat.id, "Please finish/abort current game first!");
         
       if(getting) return;
@@ -100,8 +100,7 @@ module.exports = function(){
           bot.sendMessage(msg.chat.id, sString,{
             parse_mode: "Markdown"
           }, function(err){
-            if(session.live == 0)
-              $this.$tasks["start"]([], msg);
+            $this.$tasks["start"]([], msg);
           });
         } else {
           bot.sendMessage(msg.chat.id, "Nice one!\n\n"+sString,{
@@ -123,7 +122,7 @@ module.exports = function(){
             if(err)
               console.log(err);
             bot.sendMessage(msg.chat.id, stageString(session), { parse_mode: "Markdown" });
-            return $this.$tasks["start"]([], msg)
+            if(session.live == 0) $this.$tasks["start"]([], msg)
           }
         );
       }
