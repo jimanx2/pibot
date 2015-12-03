@@ -90,7 +90,7 @@ module.exports = function(){
         bot.sendPhoto(
           msg.chat.id,  node.Path.resolve(pic),
           {
-            caption: (stg != 10 ? 'Nice try. That\'s wrong.' : 'You lose! :P ('+session.word+')'
+            caption: (stg != 10 ? 'Nice try. That\'s wrong.' : 'You lose! :P ('+session.word+')')
           }
         )
       }
