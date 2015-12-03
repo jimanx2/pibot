@@ -35,8 +35,9 @@ module.exports = function(){
     function startListen(params, msg){
       if(conversations[msg.chat.id])
         return bot.sendMessage(msg.chat.id, "Already started");
-        
-      cleverbot.setNick("session");
+      
+      var cleverbot = new Cleverbot("JQU5usm68qkXWHKQ", "g0giw78pG84AUw684798zYDWVMSu1FRj");
+      cleverbot.setNick("session"+msg.chat.id);
       cleverbot.create(function (err, nick) {        
         conversations[msg.chat.id] = { 
           bot: cleverbot, ref: nick, $asking: false, $listening: true,
