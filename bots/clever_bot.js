@@ -51,6 +51,9 @@ module.exports = function(){
     this.$tasks["start"] = startListen;
     this.$desc["start"] = "- Start the AI";
     function doneListen(params, msg){
+      if(conversations[msg.chat.id].buzz)
+        clearInterval(conversations[msg.chat.id].buzz);
+        
       conversations[msg.chat.id].$listening = false;
       conversations[msg.chat.id].$asking = false;
       bot.sendMessage(msg.chat.id, "Ok. Tata...");
