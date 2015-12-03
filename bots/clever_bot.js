@@ -38,7 +38,7 @@ module.exports = function(){
 
         var phrase = params.join(' ');
         // console.log("Sending ",phrase );
-        if(conversations[msg.chat.id])
+        if(!conversations[msg.chat.id])
           return bot.sendMessage(msg.chat.id, "Please wait. I'm thinking.", {
             reply_to_message_id: msg.message_id,
             reply_markup: { force_reply: true }
