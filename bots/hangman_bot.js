@@ -92,7 +92,8 @@ module.exports = function(){
           {
             caption: (stg != 10 ? 'Nice try. That\'s wrong.' : 'You lose! :P ('+session.word+')')
           }
-        )
+        );
+        bot.sendMessage(msg.chat.id, stageString(session), { parse_mode: "Markdown" })
       }
     }
     
