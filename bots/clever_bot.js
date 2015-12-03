@@ -37,7 +37,7 @@ module.exports = function(){
       if(conversations[msg.chat.id])
         return bot.sendMessage(msg.chat.id, "Already started");
       
-      var cleverbot = new Cleverbot("JQU5usm68qkXWHKQ", "g0giw78pG84AUw684798zYDWVMSu1FRj");
+      var cleverbot = new Cleverbot("<api key>", "<api secret>"); // get from cleverbot.io
       cleverbot.setNick("session"+msg.chat.id);
       cleverbot.create(function (err, nick) {        
         conversations[msg.chat.id] = { 
