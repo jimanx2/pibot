@@ -37,7 +37,7 @@ module.exports = function(){
           }, 5*60*1000),
           lastHumanReply: 0
         };
-        bot.sendMessage(msg.chat.id, greetings[Math.random()*greetings.length]);
+        bot.sendMessage(msg.chat.id, greetings[Math.floor(Math.random()*greetings.length)]);
       });
     };
     startListen.$noArgs = true;
