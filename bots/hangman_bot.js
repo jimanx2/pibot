@@ -5,7 +5,9 @@ module.exports = function(){
     var $this = this;
     
     this.$name = "hang";
-    var sessions = {}, getting = false;
+    var sessions = {}, getting = false, hangman = [
+      ""
+    ];
     
     function getStage(msg){
       return new Promise(function(resolve, reject){
@@ -109,14 +111,16 @@ module.exports = function(){
       } else {
         session.live -= 1;
         stg = (10 - session.live);
-        pic = './assets/images/stage' + (stg == 10 ? (stg+'.gif') : (stg+'.png'));
-        // console.log(pic);
-        bot.sendPhoto(
-          msg.chat.id,  node.Path.resolve(pic),
-          {
-            caption: (stg != 10 ? 'Nice try. That\'s wrong.' : 'You lose! :P ('+session.word+')')
-          },
+        pic = './assets/images/stage' + stg + '.txt';
+        pic = node.Fs.readFileSync(node.Path.resolve(pic)).toString();
+        pic = pic + "\n" + (stg != 10 ? 'Nice try. That\'s wrong.' : 'You lose! :P ('+session.word+')');
+        pic = "```\n"+pic+"```\n";
+        bot.sendMessage(
+          msg.chat.id, 
+          pic, { parse_mode: "Markdown" },
           function(err){
+            if(err)
+              console.log(err);
             bot.sendMessage(msg.chat.id, stageString(session), { parse_mode: "Markdown" })
           }
         );
