@@ -4,12 +4,13 @@ module.exports = function(){
   function HangmanBot(bot, node){
     var $this = this;
     
-    this.$name = "hang";
+    this.$name = "hangm";
     var sessions = {};
     
-    function getStage(){
+    function getStage(msg){
       return new Promise(function(resolve, reject){
       
+        bot.sendMessage(msg.chat.id, "Please wait..");
         node.Request('http://localhost:3000/workers/hangman', function (error, response, body) {
           if (!error && response.statusCode == 200) {
             var stage = JSON.parse(body);
@@ -27,6 +28,11 @@ module.exports = function(){
         return goodGuess >= 0 ? session.guesses[goodGuess] : "\\_"; 
       });
       
+      if(guess.join('') == session.word){
+        session.win = true;
+        return "You won! ("+session.word+")";
+      }
+
       return "*New Hangman Game*\n"+
         "Category: *"+session.category+"*\n"+
         guess.join('.') + "\n"+
@@ -34,9 +40,11 @@ module.exports = function(){
     }
     function startGame(params, msg){
       if(sessions[msg.chat.id])
-        return bot.sendMessage(msg.chat.id, "Please finish/abort current game first!");
+        if(!sessions[msg.chat.id].win)
+          return bot.sendMessage(msg.chat.id, "Please finish/abort current game first!");
         
-      getStage().then(function(stage){
+      getStage(msg).then(function(stage){
+        console.log(stage.word);
         sessions[msg.chat.id] = {
           live: 10,
           category: stage.category,
@@ -73,23 +81,28 @@ module.exports = function(){
     this.$tasks["forfeit"] = forfeitGame;
     this.$desc["forfeit"] = "- Forfeit a game (Noob much?)";
     
-    function success(msg){
-      sessions[msg.chat.id] = null;
-      bot.sendMessage(msg.chat.id, "Yeay, you win! ("+sessions[msg.chat.id].word+")")
-    }
-    
     function attempt(msg, char){
       var session = sessions[msg.chat.id], pic, stg;
       if( !session ) return;
       
       if( session.word.indexOf(char) >= 0 ){
-        session.guesses.push(char);
-        if(session.guesses.join('') == session.word){
-          return success(msg);
+        char.split('').forEach(function(c){
+          session.guesses.push(c);
+        })
+        
+        var sString = stageString(session);
+        if(session.win){
+          bot.sendMessage(msg.chat.id, sString,{
+            parse_mode: "Markdown"
+          }, function(err){
+            $this.$tasks["start"]([], msg);
+          });
+        } else {
+          bot.sendMessage(msg.chat.id, "Nice one!\n\n"+sString,{
+            parse_mode: "Markdown"
+          });
         }
-        bot.sendMessage(msg.chat.id, "Nice one!\n\n"+stageString(session),{
-          parse_mode: "Markdown"
-        });
+        
       } else {
         session.live -= 1;
         stg = (10 - session.live);
@@ -99,9 +112,11 @@ module.exports = function(){
           msg.chat.id,  node.Path.resolve(pic),
           {
             caption: (stg != 10 ? 'Nice try. That\'s wrong.' : 'You lose! :P ('+session.word+')')
+          },
+          function(err){
+            bot.sendMessage(msg.chat.id, stageString(session), { parse_mode: "Markdown" })
           }
         );
-        bot.sendMessage(msg.chat.id, stageString(session), { parse_mode: "Markdown" })
       }
     }
     
