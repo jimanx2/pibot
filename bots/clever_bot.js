@@ -5,8 +5,7 @@ module.exports = function(){
     var $this = this;
     this.$name = "ai";
     
-    var $listening = false, convId = null,
-        $asking = false, conversations = {};
+    var conversations = {};
     var Cleverbot = require("cleverbot.io");
     
     function startListen(params, msg){
