@@ -6,60 +6,52 @@ module.exports = function(){
     this.$name = "ai";
     
     var $listening = false, convId = null,
-        $asking = false;
+        $asking = false, conversations = {};
     var Cleverbot = require("cleverbot.io");
-    cleverbot = new Cleverbot("JQU5usm68qkXWHKQ", "g0giw78pG84AUw684798zYDWVMSu1FRj");
     
     function startListen(params, msg){
-      cleverbot.setNick("sessionname");
-      cleverbot.create(function (err, session) {
-        $listening = true;
-        convId = msg.chat.id;
-        bot.sendMessage(convId, "Yes sir?");
+      var cleverbot = new Cleverbot("JQU5usm68qkXWHKQ", "g0giw78pG84AUw684798zYDWVMSu1FRj");
+      cleverbot.create(function (err, nick) {
+        conversations[msg.chat.id] = { bot: cleverbot, ref: nick, $asking: false, $listening: true };
+        bot.sendMessage(convId, "Hi, I am "+nick);
       });
     };
     startListen.$noArgs = true;
     this.$tasks["start"] = startListen;
     this.$desc["start"] = "- Start the AI";
-    function doneListen(){
-      $listening = false;
-      $asking = false;
-      bot.sendMessage(convId, "Ok. Tata...");
-      convId = null;
+    function doneListen(params, msg){
+      conversations[msg.chat.id].$listening = false;
+      conversations[msg.chat.id].$asking = false;
+      bot.sendMessage(msg.chat.id, "Ok. Tata...");
+      conversations[msg.chat.id] = null;
     }
     doneListen.$noArgs = true;
     this.$tasks["done"] = doneListen;
     this.$desc["done"] = "- Stop the AI";
     
     bot.on($this.$name, function(params, msg){
-      if($listening){
+      if(conversations[msg.chat.id]){
+        if(!conversations[msg.chat.id].$listening) return $this.$tasks["desc"]([], msg);
         if(params[0] == "done") return $this.$tasks["done"]([], msg);
         console.log("CleverBot :", params.join(' '));
 
         // not the required chat
-        if( !convId ){
-          return;
-        }
-        if( msg.chat.id != convId ){
-          console.log(msg.chat.id,"!=", convId);
-          return;
-        }
 
         var phrase = params.join(' ');
         // console.log("Sending ",phrase );
-        if($asking)
-          return bot.sendMessage(convId, "Please wait. I'm thinking.", {
+        if(conversations[msg.chat.id])
+          return bot.sendMessage(msg.chat.id, "Please wait. I'm thinking.", {
             reply_to_message_id: msg.message_id,
             reply_markup: { force_reply: true }
           });
 
-        $asking = true;  
-        cleverbot.ask(phrase, function (err, response) {
-          bot.sendMessage(convId, response, {
+        conversations[msg.chat.id].$asking = true;
+        conversations[msg.chat.id].bot.ask(phrase, function (err, response) {
+          bot.sendMessage(msg.chat.id, response, {
             reply_to_message_id: msg.message_id,
             reply_markup: { force_reply: true }
           });
-          $asking = false;
+          conversations[msg.chat.id].$asking = false;
         });
         return;
       }
