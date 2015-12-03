@@ -4,7 +4,7 @@ module.exports = function(){
   function HangmanBot(bot, node){
     var $this = this;
     
-    this.$name = "hangman";
+    this.$name = "hang";
     var sessions = {};
     
     function getStage(){
@@ -73,12 +73,20 @@ module.exports = function(){
     this.$tasks["forfeit"] = forfeitGame;
     this.$desc["forfeit"] = "- Forfeit a game (Noob much?)";
     
+    function success(msg){
+      sessions[msg.chat.id] = null;
+      bot.sendMessage(msg.chat.id, "Yeay, you win!")
+    }
+    
     function attempt(msg, char){
       var session = sessions[msg.chat.id], pic, stg;
       if( !session ) return;
       
       if( session.word.indexOf(char) >= 0 ){
         session.guesses.push(char);
+        if(session.guesses.join('') == session.word){
+          return success(msg);
+        }
         bot.sendMessage(msg.chat.id, "Nice one!\n\n"+stageString(session),{
           parse_mode: "Markdown"
         });
