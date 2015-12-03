@@ -23,8 +23,9 @@ module.exports = function(){
     var Cleverbot = require("cleverbot.io");
     
     function setBoredTimer(msg){
-      if(conversations[msg.chat.id]) if(conversations[msg.chat.id].buzz)
-        clearInterval(conversations[msg.chat.id].buzz);
+      if(conversations[msg.chat.id]) 
+        if(conversations[msg.chat.id].buzz)
+          clearInterval(conversations[msg.chat.id].buzz);
         
       return setInterval(function(){
         var now = new Date().getTime();
@@ -51,8 +52,9 @@ module.exports = function(){
     this.$tasks["start"] = startListen;
     this.$desc["start"] = "- Start the AI";
     function doneListen(params, msg){
-      if(conversations[msg.chat.id].buzz)
-        clearInterval(conversations[msg.chat.id].buzz);
+      if(conversations[msg.chat.id]) 
+        if(conversations[msg.chat.id].buzz)
+          clearInterval(conversations[msg.chat.id].buzz);
         
       conversations[msg.chat.id].$listening = false;
       conversations[msg.chat.id].$asking = false;
